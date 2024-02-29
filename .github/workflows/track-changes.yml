@@ -1,27 +1,42 @@
-name: Track Code Changes
+name: Find Modified Python Files
 
-on: [push]
+on:
+  push:
+    branches:
+      - main  
 
 jobs:
-  track-code-changes:
-    runs-on: self-hosted
+  find_modified_files:
+    runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Extract commit hash
-        id: extract_commit_hash
-        run: echo "${{ github.sha }}"
+      - name: Make script executable
+        run: chmod +x scripts/find_modified_py_files.sh
 
-      - name: Save commit hash to file
-        id: save_commit_hash
-        run: echo "${{ steps.extract_commit_hash.outputs.output }}" > changelog.txt
-
-      - name: View changed files
+      - name: Run script to find modified .py files
         run: |
-          git diff --name-only ${{ github.event.before }} ${{ github.sha }}
+          ./scripts/find_modified_py_files.sh
+          mv modified_py_files.txt $GITHUB_WORKSPACE/modified_py_files.txt
 
-      - name: Log changes
-        run: |
-          echo "Changes detected:"
-          git diff --name-only ${{ github.event.before }} ${{ github.sha }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: modified-py-files
+          path: $GITHUB_WORKSPACE/modified_py_files.txt
+
+  view_modified_files:
+    needs: [find_modified_files]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: modified-py-files
+          path: ${{ github.workspace }}/artifacts
+
+      - name: Print file contents
+        run: cat ${{ github.workspace }}/artifacts/modified_py_files.txt

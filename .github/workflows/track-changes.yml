@@ -19,9 +19,8 @@ jobs:
 
       - name: View changed files
         uses: actions/github-file@v3
-        env:
+        with:
           GITHUB_FILE_PATH: ${{ env.GITHUB_FILE_PATH }}
-        run: gh file view --files "${{ env.GITHUB_FILE_PATH }}"
 
       - name: Log changes
         run: |

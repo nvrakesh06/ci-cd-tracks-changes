@@ -1,0 +1,29 @@
+name: Track Code Changes
+
+on: [push]
+
+jobs:
+  track-code-changes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Extract commit hash
+        id: extract_commit_hash
+        run: echo "${{ github.sha }}"
+
+      - name: Save commit hash to file
+        id: save_commit_hash
+        run: echo "${{ steps.extract_commit_hash.outputs.output }}" > changelog.txt
+
+      - name: View changed files
+        uses: actions/github-file@v3
+        env:
+          GITHUB_FILE_PATH: ${{ env.GITHUB_FILE_PATH }}
+        run: gh file view --files "${{ env.GITHUB_FILE_PATH }}"
+
+      - name: Log changes
+        run: |
+          echo "Changes detected:"
+          echo "${{ env.GITHUB_FILE_PATH }}" # Corrected to use env.GITHUB_FILE_PATH

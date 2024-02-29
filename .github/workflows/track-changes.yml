@@ -1,9 +1,6 @@
 name: Track Code Changes
 
-on:
-  push:
-    branches:
-      - main
+on: [push]
 
 jobs:
   track-code-changes:

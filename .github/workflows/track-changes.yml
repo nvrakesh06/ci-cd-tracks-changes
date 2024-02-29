@@ -19,7 +19,7 @@ jobs:
       - name: Run script to find modified .py files
         run: |
           ./scripts/find_modified_py_files_2.sh
-          mv modified_py_files.txt $GITHUB_WORKSPACE/modified_py_files.txt
+          mv -f modified_py_files.txt $GITHUB_WORKSPACE/modified_py_files.txt
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2

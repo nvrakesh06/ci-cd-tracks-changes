@@ -1,6 +1,9 @@
 name: Track Code Changes
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   track-code-changes:
@@ -18,11 +21,10 @@ jobs:
         run: echo "${{ steps.extract_commit_hash.outputs.output }}" > changelog.txt
 
       - name: View changed files
-        uses: actions/github-file@v3
-        with:
-          GITHUB_FILE_PATH: ${{ env.GITHUB_FILE_PATH }}
+        run: |
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }}
 
       - name: Log changes
         run: |
           echo "Changes detected:"
-          echo "${{ env.GITHUB_FILE_PATH }}" # Corrected to use env.GITHUB_FILE_PATH
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }}

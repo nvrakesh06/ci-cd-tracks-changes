@@ -16,8 +16,11 @@ jobs:
       - name: Make script executable
         run: chmod +x scripts/find_modified_py_files_2.sh
 
-      - name: Remove existing file if exists
-        run: rm -f $GITHUB_WORKSPACE/modified_py_files.txt
+      - name: Remove existing file if exists on runner
+        run: |
+          if [ -f modified_py_files.txt ]; then
+            rm -f modified_py_files.txt
+          fi
 
       - name: Run script to find modified .py files
         run: |
